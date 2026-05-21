@@ -1,19 +1,23 @@
 public class Main {
-    
     public static void main(String[] args) {
         WeightedGraph<String> weightedGraph = new WeightedGraph<>(true);
         fillWithWeights(weightedGraph);
+
+        Vertex<String> start = weightedGraph.getVertex("Almaty");
+        Vertex<String> end = weightedGraph.getVertex("Kyzylorda");
 
         if (start != null && end != null) {
             System.out.println("Dijkstra:");
             Search<String> djk = new DijkstraSearch<>(weightedGraph, start);
             outputPath(djk, end);
 
+            System.out.println("--------------------");
 
-        System.out.println("--------------------------------");
+            System.out.println("DFS:");
+            Search<String> dfs = new DepthFirstSearch<>(weightedGraph, start);
+            outputPath(dfs, end);
 
-        UnweightedGraph<String> graph = new UnweightedGraph<>(true);
-        fillWithoutWeights(graph);
+            System.out.println("--------------------");
 
             System.out.println("BFS:");
             Search<String> bfs = new BreadthFirstSearch<>(weightedGraph, start);
@@ -21,22 +25,6 @@ public class Main {
         } else {
             System.out.println("Start or End vertex not found in graph!");
         }
-
-        System.out.println("--------------------------------");
-
-        System.out.println("BFS:");
-        Search<String> bfs = new BreadthFirstSearch<>(graph, "Almaty");
-        outputPath(bfs, "Kyzylorda");
-    }
-
-    public static void fillWithoutWeights(UnweightedGraph<String> graph) {
-        graph.addEdge("Almaty", "Astana"); // 16 - 19
-        graph.addEdge("Shymkent", "Atyrau");
-        graph.addEdge("Atyrau", "Astana");
-        graph.addEdge("Almaty", "Shymkent");
-        graph.addEdge("Shymkent", "Astana");
-        graph.addEdge("Astana", "Kostanay");
-        graph.addEdge("Shymkent", "Kyzylorda");
     }
 
     public static void fillWithWeights(WeightedGraph<String> graph) {
@@ -49,11 +37,15 @@ public class Main {
         graph.addEdge("Shymkent", "Kyzylorda", 5.4);
     }
 
-    public static void outputPath(Search<String> search, String key) {
-        for (String v : search.pathTo(key)) {
-            System.out.print(v + " -> ");
+    public static void outputPath(Search<String> search, Vertex<String> key) {
+        Iterable<Vertex<String>> path = search.pathTo(key);
+        if (path == null) {
+            System.out.println("Path not found");
+            return;
         }
-
+        for (Vertex<String> v : path) {
+            System.out.print(v.getData() + (v.getData().equals(key.getData()) ? "" : " -> "));
+        }
         System.out.println();
     }
 }
